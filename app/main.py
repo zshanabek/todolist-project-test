@@ -1,6 +1,20 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
-app = FastAPI(title="Mini User & Project Management API")
+from app.db import create_db_and_tables
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    create_db_and_tables()
+    yield
+
+
+app = FastAPI(
+    title="Mini User & Project Management API",
+    lifespan=lifespan,
+)
 
 
 @app.get("/health", tags=["health"])
